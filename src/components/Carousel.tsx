@@ -17,34 +17,57 @@ interface StyleDefinition {
 export const Carousel: React.FC<Props> = ({
   images,
   step = 3,
-  frameSize,
+  frameSize = 130,
   itemWidth = 130,
   animationDuration,
-  infinite,
+  infinite = false,
 }) => {
+  const safeFrameSize = Math.min(frameSize, images.length);
+
+  const safeStep = Math.max(1, Math.min(step, images.length));
+
   const containerStyle: StyleDefinition = {
-    width: `${frameSize * itemWidth}px`,
+    width: `${safeFrameSize * itemWidth}px`,
     overflow: 'hidden',
   };
 
-  const newArrImages = infinite
-    ? [...images.slice(-frameSize), ...images, ...images.slice(0, frameSize)]
-    : images;
+  let newArrImages: string[];
 
-  const [currentIndex, setCurrentIndex] = useState(infinite ? frameSize : 0);
+  if (infinite) {
+    newArrImages = [
+      ...images.slice(-safeFrameSize),
+      ...images,
+      ...images.slice(0, safeFrameSize),
+    ];
+  } else {
+    newArrImages = images;
+  }
+
+  const [currentIndex, setCurrentIndex] = useState(
+    infinite ? safeFrameSize : 0,
+  );
 
   const [position, setPosition] = useState<StyleDefinition>({
     transform: `translateX(${-currentIndex * itemWidth}px)`,
     transition: `transform ${animationDuration}ms ease`,
   });
 
+  if (!images || images.length === 0) {
+    return <div className="Carousel__empty">No imagq to display</div>;
+  }
+
+  const nextDisabled =
+    newArrImages.length <= frameSize ||
+    currentIndex + safeFrameSize >= newArrImages.length ||
+    currentIndex + safeStep >= newArrImages.length;
+
   const goNext = () => {
-    const tentativeIndex = currentIndex + step;
+    const tentativeIndex = currentIndex + safeStep;
 
     // Если не infinite — ограничить максимальный индекс
     const maxIndex = infinite
-      ? images.length + frameSize
-      : images.length - frameSize;
+      ? images.length + safeFrameSize
+      : images.length - safeFrameSize;
 
     const newIndex = Math.min(tentativeIndex, maxIndex);
 
@@ -68,7 +91,7 @@ export const Carousel: React.FC<Props> = ({
   };
 
   const goPrev = () => {
-    const tentativeIndex = currentIndex - step;
+    const tentativeIndex = currentIndex - safeStep;
 
     const minIndex = infinite ? 0 : 0;
 
@@ -80,7 +103,7 @@ export const Carousel: React.FC<Props> = ({
       transition: `transform ${animationDuration}ms ease`,
     });
 
-    if (infinite && tentativeIndex < frameSize) {
+    if (infinite && tentativeIndex < safeFrameSize) {
       setTimeout(() => {
         const resetIndex = tentativeIndex + images.length;
 
@@ -121,7 +144,7 @@ export const Carousel: React.FC<Props> = ({
         data-cy="next"
         className="Carousel__button next"
         onClick={goNext}
-        disabled={!infinite && currentIndex === newArrImages.length - frameSize}
+        disabled={nextDisabled}
       >
         {'>'}
       </button>

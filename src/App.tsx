@@ -36,6 +36,10 @@ class App extends React.Component<{}, State> {
     animationDurationInput: '',
   };
 
+  componentDidMount() {
+    document.title = 'Carousel';
+  }
+
   handleChange =
     (field: InputField) => (e: React.ChangeEvent<HTMLInputElement>) => {
       this.setState(prev => ({
@@ -56,13 +60,13 @@ class App extends React.Component<{}, State> {
     // Значения по умолчанию
     const defaultStep = 3;
     const defaultFrameSize = 3;
-    const defaultItemWidt = 130;
+    const defaultItemWidth = 130;
     const defaultanimationDuration = 1000;
 
     // Преобразование строк в числа, если введено
     const step = parseInt(stepInput) || defaultStep;
     const frameSize = parseInt(frameSizeInput) || defaultFrameSize;
-    const itemWidth = parseInt(itemWidthInput) || defaultItemWidt;
+    const itemWidth = parseInt(itemWidthInput) || defaultItemWidth;
     const animationDuration =
       parseInt(animationDurationInput) || defaultanimationDuration;
 
@@ -76,7 +80,7 @@ class App extends React.Component<{}, State> {
             id="stepId"
             name="stepId"
             type="number"
-            placeholder={`Step (default ${defaultStep})`}
+            placeholder={`(default ${defaultStep})`}
             value={stepInput}
             onChange={this.handleChange('stepInput')}
           />
@@ -85,7 +89,7 @@ class App extends React.Component<{}, State> {
             id="frameId"
             name="frameId"
             type="number"
-            placeholder={`Frame Size (default ${defaultFrameSize})`}
+            placeholder={`(default ${defaultFrameSize})`}
             value={frameSizeInput}
             onChange={this.handleChange('frameSizeInput')}
           />
@@ -94,7 +98,7 @@ class App extends React.Component<{}, State> {
             id="itemId"
             name="itemId"
             type="number"
-            placeholder={`Item Widt (default ${defaultItemWidt})`}
+            placeholder={`(default ${defaultItemWidth})`}
             value={itemWidthInput}
             onChange={this.handleChange('itemWidthInput')}
           />
@@ -102,7 +106,7 @@ class App extends React.Component<{}, State> {
           <input
             name="animationDuration"
             type="number"
-            placeholder={`Frame Size (default ${defaultanimationDuration})`}
+            placeholder={`(default ${defaultanimationDuration}ms)`}
             value={animationDurationInput}
             onChange={this.handleChange('animationDurationInput')}
           />
